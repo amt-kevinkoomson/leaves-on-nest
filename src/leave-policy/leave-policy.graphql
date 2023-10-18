@@ -1,0 +1,33 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.0"
+    import: ["@key", "@shareable"]
+  )
+
+type LeavePolicy @key(fields: "id") @shareable {
+  id: ID!
+  title: String
+  description: String
+  leave_type_id: LeaveType
+  start_delay: String
+  accrual_rate: String
+  max_accrual: String
+  carryover: String
+  carryover_expiry: String
+}
+
+type LeaveType @key(fields: "id") @shareable {
+  id: ID!
+  title: String
+  description: String
+}
+
+type Holidays @key(fields: "id") @shareable {
+  id: ID!
+  day: String
+}
+
+type Query {
+  getLeavePolicy(id: Int!): LeavePolicy
+  listLeavePolicies: [LeavePolicy]
+}

@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Approval {
+  APPROVED
+  PENDING
+  DENIED
+  DRAFT
+}
+
+model LeavePolicy {
+  id                Int            @id @default(autoincrement())
+  title             String         @unique
+  description       String?
+  leave_type        LeaveType      @relation(fields: [leave_type_id], references: [id])
+  start_delay       String
+  accrual_rate      String
+  max_accrual       String
+  carry_over        String
+  carry_over_expiry DateTime
+  leave_type_id     Int
+  isArchived        Boolean        @default(false)
+  BookedLeaves      BookedLeaves[]
+}
+
+model LeaveType {
+  id              Int           @id @default(autoincrement())
+  name            String
+  description     String?
+  organization_id Int
+  LeavePolicy     LeavePolicy[]
+}
+
+model Holidays {
+  id        Int      @id @default(autoincrement())
+  name      String
+  start_day DateTime
+  end_day   DateTime
+}
+
+model BookedLeaves {
+  id              Int         @id @default(autoincrement())
+  status          Approval
+  start           DateTime
+  end             DateTime
+  leave_policy    LeavePolicy @relation(fields: [leave_policy_id], references: [id])
+  leave_policy_id Int
+  user_id         Int
+  manager_id      Int
+  organization_id Int
+  days            Float
+}
